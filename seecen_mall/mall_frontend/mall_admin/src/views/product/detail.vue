@@ -38,8 +38,8 @@
         <div class="view-cover">
           <el-image
             v-if="form.coverImage"
-            :src="form.coverImage"
-            :preview-src-list="[form.coverImage]"
+            :src="fullImageUrl(form.coverImage)"
+            :preview-src-list="[fullImageUrl(form.coverImage)]"
             fit="cover"
             class="cover-large"
           />
@@ -127,7 +127,7 @@
             :on-error="handleUploadError"
             accept="image/*"
           >
-            <img v-if="form.coverImage" :src="form.coverImage" class="cover-preview" />
+            <img v-if="form.coverImage" :src="fullImageUrl(form.coverImage)" class="cover-preview" />
             <el-icon v-else class="cover-uploader-icon"><Plus /></el-icon>
           </el-upload>
           <div class="cover-tip">点击上传，支持 jpg / png / gif / webp / svg，单张不超过 5MB</div>
@@ -160,6 +160,7 @@ import { ElMessage } from 'element-plus'
 import { Plus, View, Edit } from '@element-plus/icons-vue'
 import { getCategories } from '../../api/category'
 import { getProduct, updateProduct } from '../../api/product'
+import { fullImageUrl, uploadUrl } from '../../utils/image'
 
 const route = useRoute()
 const router = useRouter()
@@ -204,8 +205,7 @@ const categoryName = computed(() => {
   return found ? found.name : ''
 })
 
-// el-upload 配置
-const uploadUrl = '/api/admin/upload/image'
+// el-upload 配置（地址与请求头来自 utils/image，开发走 proxy、生产直连后端）
 const uploadHeaders = computed(() => ({
   Authorization: localStorage.getItem('token')
     ? `Bearer ${localStorage.getItem('token')}`

@@ -24,7 +24,7 @@
       <el-table :data="tableData" v-loading="loading" stripe>
         <el-table-column label="封面" width="90">
           <template #default="{ row }">
-            <el-image :src="row.coverImage" class="cover" fit="cover" />
+            <el-image :src="fullImageUrl(row.coverImage)" class="cover" fit="cover" />
           </template>
         </el-table-column>
         <el-table-column prop="name" label="商品名称" min-width="220" show-overflow-tooltip />
@@ -67,6 +67,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getCategories } from '../../api/category'
 import { getProducts, toggleProductStatus } from '../../api/product'
+import { fullImageUrl } from '../../utils/image'
 
 const router = useRouter()
 const loading = ref(false)

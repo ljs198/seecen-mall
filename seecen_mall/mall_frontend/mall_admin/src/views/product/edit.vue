@@ -39,7 +39,7 @@
             :on-error="handleUploadError"
             accept="image/*"
           >
-            <img v-if="form.coverImage" :src="form.coverImage" class="cover-preview" />
+            <img v-if="form.coverImage" :src="fullImageUrl(form.coverImage)" class="cover-preview" />
             <el-icon v-else class="cover-uploader-icon"><Plus /></el-icon>
           </el-upload>
           <div class="cover-tip">点击上传，支持 jpg / png / gif / webp / svg，单张不超过 5MB</div>
@@ -72,6 +72,7 @@ import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { getCategories } from '../../api/category'
 import { createProduct } from '../../api/product'
+import { fullImageUrl, uploadUrl } from '../../utils/image'
 
 const router = useRouter()
 const formRef = ref()
@@ -95,8 +96,7 @@ const rules = {
   coverImage: [{ required: true, message: '请上传封面图', trigger: 'change' }]
 }
 
-// el-upload 配置
-const uploadUrl = '/api/admin/upload/image'
+// el-upload 配置（地址与请求头来自 utils/image，开发走 proxy、生产直连后端）
 const uploadHeaders = computed(() => ({
   Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : ''
 }))
