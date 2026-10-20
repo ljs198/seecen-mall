@@ -15,6 +15,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 /**
  * Spring Security 配置（认证授权完整版）
@@ -54,11 +59,39 @@ public class SecurityConfig {
     }
 
     /**
+     * 跨域配置：允许 GitHub Pages 线上地址和本地开发端口访问后端 API
+     * （前端部署在 ljs198.github.io，与后端不同源，必须放行 CORS）
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        // 允许的前端来源：线上 GitHub Pages + 本地开发
+        config.setAllowedOrigins(List.of(
+                "https://ljs198.github.io",
+                "http://localhost:5173",
+                "http://localhost:4000"
+        ));
+        // 允许的请求方法
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // 允许的请求头（Authorization 用于携带 JWT）
+        config.setAllowedHeaders(List.of("*"));
+        // 是否允许携带 Cookie（前端用 localStorage 存 Token，无需 Cookie）
+        config.setAllowCredentials(false);
+        // 预检请求缓存 1 小时
+        config.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+    /**
      * 安全过滤链
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // 0. 启用跨域配置（放在最前面，处理 OPTIONS 预检请求）
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // 1. 关闭 CSRF：纯 API 服务，不使用浏览器 Cookie 会话
                 .csrf(csrf -> csrf.disable())
                 // 2. 关闭表单登录 / HTTP Basic
