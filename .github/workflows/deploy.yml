@@ -28,6 +28,10 @@ jobs:
           npm install
           cd mall_portal
           npx vite build --config vite.config.github.js
+          cd ../mall_admin
+          npx vite build --config vite.config.github.js
+      - name: Merge admin into Pages artifact
+        run: cp -r seecen_mall/mall_frontend/mall_admin/dist ./seecen_mall/mall_frontend/mall_portal/dist/admin
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

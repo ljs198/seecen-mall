@@ -7,7 +7,9 @@ import router from '../router'
  * 请求拦截器：自动加 Authorization: Bearer <token>
  * 响应拦截器：统一处理后端 Result(code,message,data)
  */
-const request = axios.create({ baseURL: '/api', timeout: 10000 })
+// 开发环境走 vite proxy（baseURL 为 /api），生产环境拼接 .env.production 里的后端域名
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+const request = axios.create({ baseURL: API_BASE + '/api', timeout: 10000 })
 
 request.interceptors.request.use(
   (config) => {
