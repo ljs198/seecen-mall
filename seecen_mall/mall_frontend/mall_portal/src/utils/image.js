@@ -15,7 +15,8 @@ const SITE_BASE = import.meta.env.BASE_URL || '/'
 export function fullImageUrl(path) {
   if (!path) return SITE_BASE + 'placeholder.svg'
   if (/^https?:\/\//.test(path)) return path
-  if (path.startsWith('/api/uploads/')) return SITE_BASE + path.slice(4)
+  // slice(5) 去掉 '/api/' 前缀（含尾斜杠），避免拼接出 // 双斜杠
+  if (path.startsWith('/api/uploads/')) return SITE_BASE + path.slice(5)
   if (path.startsWith('/api/')) return API_BASE + path
   return path
 }
