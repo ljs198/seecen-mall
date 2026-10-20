@@ -18,7 +18,7 @@
         <div v-loading="loading" class="order-items">
           <div v-for="item in selectedItems" :key="item.id" class="order-item">
             <el-image
-              :src="item.productCoverImage || '/placeholder.svg'"
+              :src="fullImageUrl(item.productCoverImage)"
               class="item-image"
               fit="cover"
             >
@@ -67,6 +67,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { createOrder, payOrder } from '../../api/order'
 import { useCartStore } from '../../store/cart'
+import { fullImageUrl } from '../../utils/image'
 
 const router = useRouter()
 const cartStore = useCartStore()

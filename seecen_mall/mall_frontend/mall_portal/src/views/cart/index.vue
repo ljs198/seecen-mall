@@ -28,7 +28,7 @@
           <template #default="{ row }">
             <div class="product-cell">
               <el-image
-                :src="row.productCoverImage || '/placeholder.svg'"
+                :src="fullImageUrl(row.productCoverImage)"
                 class="cover"
                 fit="cover"
               >
@@ -102,6 +102,7 @@ import { computed, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '../../store/cart'
+import { fullImageUrl } from '../../utils/image'
 
 const router = useRouter()
 

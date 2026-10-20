@@ -3,7 +3,7 @@
     <div v-if="product" class="detail-layout">
       <div class="detail-image">
         <el-image
-          :src="product.coverImage || '/placeholder.svg'"
+          :src="fullImageUrl(product.coverImage)"
           :alt="product.name"
           fit="cover"
           class="main-image"
@@ -60,6 +60,7 @@ import { ElMessage } from 'element-plus'
 import { getProductDetail } from '../../api/product'
 import { useCartStore } from '../../store/cart'
 import { useUserStore } from '../../store/user'
+import { fullImageUrl } from '../../utils/image'
 
 const route = useRoute()
 const router = useRouter()

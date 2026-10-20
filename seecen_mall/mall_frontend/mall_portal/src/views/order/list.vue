@@ -116,10 +116,12 @@ function formatPrice(price) {
   return Number(price || 0).toFixed(2)
 }
 
-// 解析订单项商品图片，缺图时按 productId 兜底，再兜底占位图
+// 解析订单项商品图片：/api/ 相对路径拼上后端地址，缺图时按 productId 兜底
 function resolveProductImage(item) {
-  if (item.productImage) return item.productImage
-  if (item.productId) return '/api/uploads/images/2026/09/02/product-' + item.productId + '.jpg'
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+  const toFull = (p) => (/^https?:\/\//.test(p) ? p : API_BASE + p)
+  if (item.productImage) return toFull(item.productImage)
+  if (item.productId) return toFull('/api/uploads/images/2026/09/02/product-' + item.productId + '.jpg')
   return '/placeholder.svg'
 }
 

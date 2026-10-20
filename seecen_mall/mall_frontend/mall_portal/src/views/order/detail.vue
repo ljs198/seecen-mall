@@ -123,9 +123,11 @@ function formatPrice(price) {
  * 这里用 product_id 推算商品图路径，回退到 placeholder
  */
 function resolveProductImage(item) {
-  if (item.productImage) return item.productImage
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+  const toFull = (p) => (/^https?:\/\//.test(p) ? p : API_BASE + p)
+  if (item.productImage) return toFull(item.productImage)
   if (item.productId) {
-    return `/api/uploads/images/2026/09/02/product-${item.productId}.jpg`
+    return toFull(`/api/uploads/images/2026/09/02/product-${item.productId}.jpg`)
   }
   return '/placeholder.svg'
 }

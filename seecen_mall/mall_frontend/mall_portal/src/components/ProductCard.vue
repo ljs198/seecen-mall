@@ -4,7 +4,7 @@
     <span class="corner-lantern" aria-hidden="true">🏮</span>
 
     <div class="card-image">
-      <img :src="product.coverImage || placeholderImage" :alt="product.name" loading="lazy" @error="handleImageError" />
+      <img :src="fullImageUrl(product.coverImage)" :alt="product.name" loading="lazy" @error="handleImageError" />
     </div>
     <div class="card-body">
       <div class="card-title">{{ product.name }}</div>
@@ -24,6 +24,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { fullImageUrl } from '../utils/image'
 
 const props = defineProps({
   product: {
