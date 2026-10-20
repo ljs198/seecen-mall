@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>页面跳转中…</title>
+  </head>
+  <body>
+    <script>
+      // GitHub Pages 静态托管没有 SPA history 回退：刷新子路由会命中本 404 页。
+      // 记下原始地址后跳回对应应用入口，由入口页恢复路由（详见各 index.html）
+      var target = location.pathname + location.search + location.hash
+      try { sessionStorage.setItem('spa-redirect', target) } catch (e) {}
+      location.replace(target.indexOf('/admin') !== -1 ? '/seecen-mall/admin/' : '/seecen-mall/')
+    </script>
+  </body>
+</html>
