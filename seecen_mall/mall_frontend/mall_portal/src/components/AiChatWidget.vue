@@ -56,7 +56,7 @@
       v-if="!open"
       class="widget-trigger"
       :class="{ dragging: isDragging, idle: isIdle }"
-      @mousedown.prevent="onMouseDown"
+      @pointerdown.prevent="onPointerDown"
       aria-label="打开AI客服"
     >
       <!-- 拖拽或闲置时显示大兔子（桌宠效果，可爱风） -->
@@ -213,8 +213,9 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', onResize)
-  document.removeEventListener('mousemove', onMouseMove)
-  document.removeEventListener('mouseup', onMouseUp)
+  document.removeEventListener('pointermove', onPointerMove)
+  document.removeEventListener('pointerup', onPointerUp)
+  document.removeEventListener('pointercancel', onPointerUp)
   stopIdleTimer()
 })
 
@@ -284,8 +285,8 @@ function onResize() {
   posY.value = Math.max(0, Math.min(window.innerHeight - 110, posY.value))
 }
 
-/** 鼠标按下：开始拖拽，图标变成兔子 */
-function onMouseDown(e) {
+/** 指针按下（鼠标/触摸通用）：开始拖拽，图标变成兔子 */
+function onPointerDown(e) {
   // 取消闲置动画
   isIdle.value = false
   idleMessage.value = ''
@@ -300,12 +301,16 @@ function onMouseDown(e) {
   dragStartY.value = e.clientY
   dragOffsetX.value = e.clientX - posX.value
   dragOffsetY.value = e.clientY - posY.value
-  document.addEventListener('mousemove', onMouseMove)
-  document.addEventListener('mouseup', onMouseUp)
+  // 捕获指针：手指/鼠标移出元素后仍能持续收到移动事件。
+  // 必须绑定在 currentTarget（按钮本身），否则拖拽中大小兔子图标切换会让捕获丢失
+  try { e.currentTarget.setPointerCapture(e.pointerId) } catch (err) { /* 不支持捕获时忽略 */ }
+  document.addEventListener('pointermove', onPointerMove)
+  document.addEventListener('pointerup', onPointerUp)
+  document.addEventListener('pointercancel', onPointerUp)
 }
 
-/** 拖拽中：兔子跟随鼠标移动 */
-function onMouseMove(e) {
+/** 拖拽中：兔子跟随指针移动 */
+function onPointerMove(e) {
   if (!isDragging.value) return
   const dx = e.clientX - dragStartX.value
   const dy = e.clientY - dragStartY.value
@@ -317,10 +322,11 @@ function onMouseMove(e) {
   posY.value = Math.max(0, Math.min(window.innerHeight - 110, e.clientY - dragOffsetY.value))
 }
 
-/** 鼠标松开：恢复原样，快速点击（<300ms且未移动）才打开聊天 */
-function onMouseUp() {
-  document.removeEventListener('mousemove', onMouseMove)
-  document.removeEventListener('mouseup', onMouseUp)
+/** 指针松开/被打断：恢复原样，快速点按（<300ms且未移动）才打开聊天 */
+function onPointerUp() {
+  document.removeEventListener('pointermove', onPointerMove)
+  document.removeEventListener('pointerup', onPointerUp)
+  document.removeEventListener('pointercancel', onPointerUp)
   isDragging.value = false
   lastInteractTime.value = Date.now()
   const pressDuration = Date.now() - mouseDownTime.value
@@ -421,6 +427,8 @@ function scrollToBottom() {
   transition: all 0.3s;
   animation: moon-glow 3s ease-in-out infinite alternate;
   user-select: none;
+  /* 触摸设备上按住兔子拖动时，不要把手指移动当作页面滚动手势 */
+  touch-action: none;
 }
 
 .widget-trigger:hover {
