@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.seecen</groupId>
+        <artifactId>mall_server</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+  
+
+    <artifactId>mall_core</artifactId>
+    <name>mall_core</name>
+    <description>mall_core</description>
+
+    <!-- 复制群里的依赖 -->
+    <!-- 显式声明 jar：可启动的 Spring Boot 应用模块 -->
+    <packaging>jar</packaging>
+    <dependencies>
+        <!-- 公共模块：引入 mall-common 获得 Web/Security/MyBatis Plus/JWT/实体类等全部基础能力 -->
+        <dependency>
+            <groupId>com.seecen</groupId>
+            <artifactId>mall_common</artifactId>
+        </dependency>
+        <!-- AI客服模块：引入 mall-ai 获得 Spring AI 聊天/Function Calling/SSE 流式响应能力 -->
+        <dependency>
+            <groupId>com.seecen</groupId>
+            <artifactId>mall_ai</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Spring Boot 打包插件：将应用打包为可执行 Fat JAR，指定启动主类 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.seecen.mall.core.MallCoreApplication</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

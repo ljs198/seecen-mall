@@ -1,0 +1,157 @@
+<template>
+  <div class="home-page container">
+    <section class="banner">
+      <h1>智能商城</h1>
+      <p>从分类开始浏览商品，发现更多好物</p>
+    </section>
+
+    <section class="section" v-if="categories.length">
+      <h2 class="section-title">商品分类</h2>
+      <div class="category-grid">
+        <button
+          v-for="category in categories"
+          :key="category.id"
+          class="category-card"
+          @click="goCategory(category.id)"
+        >
+          <span>{{ category.name }}</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">热门推荐</h2>
+      <div class="product-grid" v-loading="loading">
+        <!-- 循环渲染自定义的商品卡片组件  -->
+        <ProductCard v-for="product in products" :key="product.id" :product="product" />
+      </div>
+      <el-empty v-if="!loading && products.length === 0" description="暂无商品" />
+    </section>
+  </div>
+</template>
+
+<script setup>
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import ProductCard from '../../components/ProductCard.vue'
+import { getCategories, getProducts } from '../../api/product'
+
+const router = useRouter()
+const loading = ref(false)
+const categories = ref([])
+const products = ref([])
+
+onMounted(async () => {
+  await loadCategories()
+  await loadProducts()
+})
+
+// 加载顶级分类（parentId 为空或 0 的为顶级分类）
+async function loadCategories() {
+  const res = await getCategories()
+  const data = Array.isArray(res) ? res : (res && res.data) || []
+  categories.value = data.filter((c) => !c.parentId || c.parentId === 0)
+}
+
+// 加载推荐商品（取前 8 条上架商品）
+async function loadProducts() {
+  loading.value = true
+  try {
+    const res = await getProducts({ page: 1, size: 8 })
+    products.value = (res && res.data && res.data.records) || []
+  } finally {
+    loading.value = false
+  }
+}
+
+// 点击分类跳转分类页
+function goCategory(id) {
+  router.push({ path: '/category', query: { id } })
+}
+</script>
+
+<style scoped>
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.banner {
+  padding: 48px 28px;
+  margin-bottom: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #409eff 0%, #67c23a 100%);
+  color: #ffffff;
+}
+
+.banner h1 {
+  margin: 0 0 10px;
+  font-size: 32px;
+}
+
+.banner p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.section-title {
+  margin: 0 0 16px;
+  color: #303133;
+  font-size: 22px;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px;
+}
+
+.category-card {
+  height: 72px;
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #303133;
+  cursor: pointer;
+  font-size: 14px;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.category-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  color: #409eff;
+  border-color: #409eff;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  min-height: 120px;
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: 14px;
+  }
+
+  .banner {
+    padding: 32px 20px;
+  }
+
+  .banner h1 {
+    font-size: 24px;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+</style>

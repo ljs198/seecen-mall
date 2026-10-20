@@ -1,0 +1,33 @@
+<template>
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>智能商城教学项目</p>
+      <p>用户端浏览 · Vue 3 + Element Plus</p>
+    </div>
+  </footer>
+</template>
+
+<script setup>
+// 占位组件，后续阶段会接入订单、AI 客服等入口
+</script>
+
+<style scoped>
+.app-footer {
+  margin-top: 32px;
+  padding: 24px 20px;
+  background: #f5f7fa;
+  border-top: 1px solid #e5e7eb;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  color: #909399;
+  font-size: 14px;
+}
+
+.footer-content p {
+  margin: 4px 0;
+}
+</style>

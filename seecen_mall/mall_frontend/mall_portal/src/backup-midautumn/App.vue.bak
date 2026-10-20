@@ -1,0 +1,48 @@
+<template>
+  <div class="app-wrapper">
+    <AppHeader v-if="!isAuthPage" />
+    <main class="app-main" :class="{ 'auth-main': isAuthPage }">
+      <router-view />
+    </main>
+    <AppFooter v-if="!isAuthPage" />
+    <AiChatWidget v-if="!isAuthPage" />
+  </div>
+</template>
+
+<script setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import AppHeader from './components/AppHeader.vue'
+import AppFooter from './components/AppFooter.vue'
+import AiChatWidget from './components/AiChatWidget.vue'
+
+const route = useRoute()
+// 登录、注册、权限验证页不显示公共头部底部
+const isAuthPage = computed(() =>
+  ['/login', '/register', '/auth-check', '/ai-chat'].includes(route.path)
+)
+</script>
+
+<style>
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
+  padding-top: 64px;
+}
+
+.auth-main {
+  padding-top: 0;
+}
+</style>

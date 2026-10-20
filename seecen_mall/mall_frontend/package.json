@@ -1,0 +1,17 @@
+{
+  "name": "mall_frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "智能商城前端工作区",
+  "workspaces": [
+    "mall_admin",
+    "mall_portal"
+  ],
+  "scripts": {
+    "dev:admin":    "npm run dev   --workspace=mall_admin",
+    "dev:portal":   "npm run dev   --workspace=mall_portal",
+    "build:admin":  "npm run build --workspace=mall_admin",
+    "build:portal": "npm run build --workspace=mall_portal",
+    "build":        "npm run build:admin && npm run build:portal"
+  }
+}

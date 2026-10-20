@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+mall_frontend/mall_portal/node_modules/
+mall_frontend/mall_admin/node_modules/
+
+# Build output
+mall_frontend/mall_portal/dist/
+mall_frontend/mall_admin/dist/
+
+# Java
+target/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Env
+.env
+application-local.yml
+
+# Uploads
+upload/

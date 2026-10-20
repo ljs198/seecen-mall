@@ -1,0 +1,116 @@
+# ==================== 服务器配置 ====================
+server:
+  port: 8080  # 服务端口
+
+# ==================== Spring 核心配置 ====================
+spring:
+  # -------------------- 数据源配置 --------------------
+  datasource:
+    # MySQL 连接 URL
+    # useUnicode=true&characterEncoding=utf-8：客户端使用 UTF-8 编码
+    # serverTimezone=Asia/Shanghai：强制东八区时区，避免服务端时区漂移
+    # allowPublicKeyRetrieval=true：允许客户端从服务端获取公钥（MySQL 8.0+ 必需）
+    # useSSL=false：关闭 SSL 加密连接（本地开发用）
+    url: jdbc:mysql://localhost:3306/seecen_mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver  # MySQL 8.x 驱动类
+
+  # -------------------- 文件上传配置 --------------------
+  servlet:
+    multipart:
+      max-file-size: 50MB         # 单个文件最大 50MB（图片 / 视频 / 压缩包等）
+      max-request-size: 100MB     # 单次请求体最大 100MB
+
+  # -------------------- 通义千问/OpenAI 兼容配置 --------------------
+  ai:
+    openai:
+      # 通义千问 API Key：从环境变量 AI_API_KEY 读取，未设置时用占位符
+      # 申请地址：https://dashscope.console.aliyun.com/
+      api-key: ${AI_API_KEY:sk-ws-H.PIMDXXL.4PfE.MEYCIQCAyxF_Q1PlMdm8YMZADcxo_BM4iLFYCYZFrutKd72eGQIhALr6DdmBOV6QXPiM7IcHuW-thX9V6K4VgfLG4z4o9cSn}
+      # 兼容模式：OpenAI 协议 API 完整路径（需带 /v1 后缀）
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      chat:
+        model: qwen-plus
+        temperature: 0.7
+      # 向量模型：用于 RAG 检索增强
+      embedding:
+        model: text-embedding-v3
+
+
+# ==================== MyBatis Plus 配置 ====================
+mybatis-plus:
+  configuration:
+    # 开启驼峰命名映射：数据库字段 user_name -> Java 属性 userName
+    map-underscore-to-camel-case: true
+    # SQL 日志输出到控制台（开发期排查 SQL 用，生产建议关掉或换 Slf4jImpl）
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      # 逻辑删除字段名（实体类中对应字段需标注 @TableLogic）
+      logic-delete-field: deleted
+      # 逻辑已删除值：1 表示已删除
+      logic-delete-value: 1
+      # 逻辑未删除值：0 表示未删除
+      logic-not-delete-value: 0
+
+# ==================== JWT 配置 ====================
+jwt:
+  # JWT 签名密钥：Base64 编码的 256 位随机字节，HMAC-SHA256 签名使用
+  secret: oOXl8SC4nEBX08K6M3s1Ua41eozaW7rltZZs97UWyHk=
+  # Token 有效期（毫秒）：86400000 = 24 小时
+  expiration: 86400000
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    # 业务代码 DEBUG 级别（默认 INFO，可按需改为 info / warn）
+    com.seecen.mall: debug
+
+# ==================== 文件上传路径 ====================
+upload:
+  path: D:\upload\               # 上传文件保存目录（按部署环境调整）
+
+# ============================================================
+# ↓ Spring AI 配置（暂时停用，2026-09-07）
+#   后续做 AI 时，把下面每行行首的 "# " 删掉即可启用
+# ============================================================
+
+# -------------------- 通义千问/OpenAI 兼容配置 --------------------
+#ai:
+#  openai:
+#    # 通义千问 API Key：从环境变量 AI_API_KEY 读取，未设置时用占位符
+#    # 申请地址：https://dashscope.console.aliyun.com/
+#    api-key: ${AI_API_KEY:sk-placeholder}
+#    # 兼容模式：OpenAI 协议 API 完整路径（需带 /v1 后缀）
+#    base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+#    chat:
+#      model: qwen-plus
+#      temperature: 0.7
+#    # 向量模型：用于 RAG 检索增强
+#    embedding:
+#      model: text-embedding-v3
+
+## -------------------- 多模态 AI 配置 --------------------
+## multimedia:
+#  # DashScope 多模态 API 完整路径（OpenAI 兼容模式下调用文生图等接口）
+#  dashscope-base-url: https://dashscope.aliyuncs.com/api/v1
+#  # 文生图：https://bailian.console.aliyun.com/cn-beijing?tab=api#/api/?type=model&url=2862677
+#  text2image-model: wanx2.1-t2i-turbo
+#  text2image-size: 1024*1024          # 图片分辨率：宽*高
+#  text2image-n: 1                     # 生成图片数量
+#  text2image-poll-times: 60           # 异步任务轮询最大次数
+#  text2image-poll-interval: 2000      # 轮询间隔（毫秒）
+#  text2image-url: /services/aigc/text2image/image-synthesis
+#  text2image-task-url: /tasks/%s      # 异步任务 URL，%s 替换为 task_id
+#  # 视觉/图像理解：使用 OpenAI 协议 base-url + /chat/completions 调用
+#  # https://bailian.console.aliyun.com/cn-beijing?tab=api#/api/?type=model&url=3016807
+#  vision-model: qwen-vl-plus
+
+## -------------------- MCP Client 配置：通过 stdio 连接外部 MCP Server --------------------
+## MCP Server 启动命令在 mcp-config.json 中配置（项目运行时自动加载）
+## 可选路径：classpath:mcp-config.json（打包内嵌）或 file:./config/mcp-config.json（外部文件）
+#mcp:
+#  client:
+#    stdio:
+#      servers-configuration: classpath:mcp-config.json
