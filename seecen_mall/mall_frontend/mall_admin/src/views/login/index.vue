@@ -11,8 +11,8 @@ const formRef = ref(null)
 const loading = ref(false)
 
 const form = reactive({
-  username: 'admin',
-  password: 'admin123'
+  username: '',
+  password: ''
 })
 
 const rules = {
@@ -26,8 +26,14 @@ const onSubmit = async () => {
   loading.value = true
   try {
     await userStore.login(form)
+    // 后台仅允许管理员账号进入，普通用户登录成功也立即拦截
+    if (userStore.userInfo?.role !== 'ADMIN') {
+      await userStore.logout()
+      ElMessage.error('该账号无后台访问权限，请使用管理员账号')
+      return
+    }
     ElMessage.success('登录成功')
-    router.push('/')   // **************************************
+    router.push('/')
   } catch (e) {
     // request 拦截器已统一提示
   } finally {
@@ -62,8 +68,6 @@ const goRegister = () => router.push('/register')
           <el-button link style="width: 100%" @click="goRegister">没有账号？立即注册</el-button>
         </el-form-item>
       </el-form>
-
-      <div class="tip">测试账号：admin / admin123</div>
     </el-card>
   </div>
 </template>

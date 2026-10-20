@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { ElMessage } from 'element-plus'
 
 /**
  * 管理后台路由
@@ -92,14 +93,24 @@ const router = createRouter({
 
 /**
  * 路由守卫：
- *   - 未登录访问业务页 → 跳 /login
- *   - 已登录访问 /login → 跳 /dashboard
+ *   - 未登录或非 ADMIN 角色访问业务页 → 踢回 /login
+ *   - 已登录管理员访问 /login → 跳 /dashboard
  *   - 其它 → 放行
  */
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  if (to.path !== '/login' && !token) return next('/login')
-  if (to.path === '/login' && token) return next('/dashboard')
+  const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null')
+  const isAdmin = userInfo?.role === 'ADMIN'
+  if (to.path !== '/login' && (!token || !isAdmin)) {
+    if (token && !isAdmin) {
+      // 有 token 但不是管理员：清除残留凭据并提示
+      localStorage.removeItem('token')
+      localStorage.removeItem('userInfo')
+      ElMessage.error('该账号无后台访问权限，请使用管理员账号')
+    }
+    return next('/login')
+  }
+  if (to.path === '/login' && token && isAdmin) return next('/dashboard')
   next()
 })
 
