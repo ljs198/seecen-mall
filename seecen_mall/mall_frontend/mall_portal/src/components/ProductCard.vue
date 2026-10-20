@@ -4,7 +4,7 @@
     <span class="corner-lantern" aria-hidden="true">🏮</span>
 
     <div class="card-image">
-      <img :src="fullImageUrl(product.coverImage)" :alt="product.name" loading="lazy" @error="handleImageError" />
+      <img :src="fullImageUrl(product.coverImage)" :alt="product.name" @error="handleImageError" />
     </div>
     <div class="card-body">
       <div class="card-title">{{ product.name }}</div>
@@ -35,7 +35,8 @@ const props = defineProps({
 
 const router = useRouter()
 
-const placeholderImage = '/placeholder.svg'
+// 占位图带站点 base 前缀（GitHub Pages 部署在 /seecen-mall/ 子路径下）
+const placeholderImage = (import.meta.env.BASE_URL || '/') + 'placeholder.svg'
 function formatPrice(price) {
   if (price == null) return '0.00'
   return Number(price).toFixed(2)

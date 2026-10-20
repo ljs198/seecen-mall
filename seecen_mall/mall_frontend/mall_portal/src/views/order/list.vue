@@ -119,10 +119,12 @@ function formatPrice(price) {
 // 解析订单项商品图片：/api/ 相对路径拼上后端地址，缺图时按 productId 兜底
 function resolveProductImage(item) {
   const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+  // 占位图带站点 base 前缀（GitHub Pages 部署在 /seecen-mall/ 子路径下）
+  const SITE_BASE = import.meta.env.BASE_URL || '/'
   const toFull = (p) => (/^https?:\/\//.test(p) ? p : API_BASE + p)
   if (item.productImage) return toFull(item.productImage)
   if (item.productId) return toFull('/api/uploads/images/2026/09/02/product-' + item.productId + '.jpg')
-  return '/placeholder.svg'
+  return SITE_BASE + 'placeholder.svg'
 }
 
 function formatTime(time) {
