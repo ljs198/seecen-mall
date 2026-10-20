@@ -78,6 +78,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { cancelOrder, getOrderList, payOrder } from '../../api/order'
+import { fullImageUrl } from '../../utils/image'
 
 const router = useRouter()
 const loading = ref(false)
@@ -116,15 +117,11 @@ function formatPrice(price) {
   return Number(price || 0).toFixed(2)
 }
 
-// 解析订单项商品图片：/api/ 相对路径拼上后端地址，缺图时按 productId 兜底
+// 解析订单项商品图片：复用 fullImageUrl 统一映射，缺图时按 productId 兜底
 function resolveProductImage(item) {
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
-  // 占位图带站点 base 前缀（GitHub Pages 部署在 /seecen-mall/ 子路径下）
-  const SITE_BASE = import.meta.env.BASE_URL || '/'
-  const toFull = (p) => (/^https?:\/\//.test(p) ? p : API_BASE + p)
-  if (item.productImage) return toFull(item.productImage)
-  if (item.productId) return toFull('/api/uploads/images/2026/09/02/product-' + item.productId + '.jpg')
-  return SITE_BASE + 'placeholder.svg'
+  if (item.productImage) return fullImageUrl(item.productImage)
+  if (item.productId) return fullImageUrl('/api/uploads/images/2026/09/02/product-' + item.productId + '.jpg')
+  return (import.meta.env.BASE_URL || '/') + 'placeholder.svg'
 }
 
 function formatTime(time) {

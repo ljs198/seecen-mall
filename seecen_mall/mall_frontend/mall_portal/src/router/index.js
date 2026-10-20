@@ -70,7 +70,9 @@ const routes = [
   }
 ]
 
-const router = createRouter({ history: createWebHistory(), routes })
+// base 必须带上部署子路径（GitHub Pages 为 /seecen-mall/），
+// 否则首次访问 /seecen-mall/ 时路由匹配不到任何页面，内容区空白
+const router = createRouter({ history: createWebHistory(import.meta.env.BASE_URL), routes })
 
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
