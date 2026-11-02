@@ -29,9 +29,9 @@ spring:
       # 申请地址：https://dashscope.console.aliyun.com/
       api-key: ${AI_API_KEY:sk-ws-H.PIMDXXL.4PfE.MEYCIQCAyxF_Q1PlMdm8YMZADcxo_BM4iLFYCYZFrutKd72eGQIhALr6DdmBOV6QXPiM7IcHuW-thX9V6K4VgfLG4z4o9cSn}
       # 兼容模式：OpenAI 协议 API 完整路径（需带 /v1 后缀）
-      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      base-url: https://llm-biy1milduw0owu1f.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
       chat:
-        model: qwen-plus
+        model: deepseek-v4.1-flash-1017
         temperature: 0.7
       # 向量模型：用于 RAG 检索增强
       embedding:
